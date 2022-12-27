@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Currency Converter</string>
+
+    <string name="from_value_in">From Value in</string>
+    <string name="to_value_in">To Value in</string>
+    <string name="txtFill">0</string>
+    <string name="calculate">Calculate</string>
+    <string name="currency_list_view">Currency List View</string>
+    <string name="text">Text</string>
+
+    <string-array name="curr_arr">
+        <item>EURO</item>
+        <item>USD</item>
+        <item>YEN</item>
+    </string-array>
+
+</resources>

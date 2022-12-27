@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/txtFrom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/from_value_in"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/spFrom"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="100dp"
+        app:layout_constraintBottom_toBottomOf="@+id/txtFrom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/txtFrom"
+        app:layout_constraintTop_toTopOf="@+id/txtFrom"
+        app:layout_constraintVertical_bias="0.551"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <EditText
+        android:id="@+id/ValInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
+        android:autofillHints="0"
+        android:ems="10"
+        android:hint="@string/txtFill"
+        android:inputType="numberDecimal"
+        android:minHeight="48dp"
+        android:selectAllOnFocus="false"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/txtFrom"
+        app:layout_constraintTop_toBottomOf="@+id/spFrom"
+        tools:ignore="DuplicateSpeakableTextCheck" />
+
+    <Space
+        android:id="@+id/Space"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ValInput" />
+
+    <Spinner
+        android:id="@+id/spTo"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        app:layout_constraintBottom_toBottomOf="@+id/txtFrom2"
+        app:layout_constraintEnd_toEndOf="@+id/spFrom"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/txtFrom"
+        app:layout_constraintTop_toTopOf="@+id/txtFrom2"
+        app:layout_constraintVertical_bias="0.517"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <TextView
+        android:id="@+id/txtFrom2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/to_value_in"
+        app:layout_constraintEnd_toEndOf="@+id/txtFrom"
+        app:layout_constraintStart_toStartOf="@+id/txtFrom"
+        app:layout_constraintTop_toBottomOf="@+id/Space" />
+
+    <EditText
+        android:id="@+id/ValOutput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:enabled="false"
+        android:hint="@string/txtFill"
+        android:inputType="none"
+        android:minHeight="48dp"
+        android:selectAllOnFocus="false"
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="@+id/ValInput"
+        app:layout_constraintStart_toStartOf="@+id/ValInput"
+        app:layout_constraintTop_toBottomOf="@+id/spTo" />
+
+    <Space
+        android:id="@+id/space"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ValOutput" />
+
+    <Button
+        android:id="@+id/btnCalc"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="16dp"
+        android:shadowColor="@color/black"
+        android:text="@string/calculate"
+        app:layout_constraintEnd_toEndOf="@+id/ValOutput"
+        app:layout_constraintStart_toStartOf="@+id/ValOutput"
+        app:layout_constraintTop_toBottomOf="@+id/space"
+        app:rippleColor="#9979D3"
+        app:strokeColor="#F1F1F1" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
