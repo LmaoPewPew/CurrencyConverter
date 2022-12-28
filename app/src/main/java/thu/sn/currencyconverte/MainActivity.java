@@ -1,8 +1,5 @@
 package thu.sn.currencyconverte;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -11,11 +8,13 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 //test
 
 
@@ -24,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
     /********Set Global Variables Variables********/
 
     ExchangeRateDatabase db = new ExchangeRateDatabase();
-
 
     /********ON CREATE METHODE********/
 
@@ -38,15 +36,26 @@ public class MainActivity extends AppCompatActivity {
 
         Button btnCalc = findViewById(R.id.btnCalc);
 
-        TextView valIn =  findViewById(R.id.ValInput);
+        TextView valIn = findViewById(R.id.ValInput);
         TextView valOut = findViewById(R.id.ValOutput);
 
         Spinner spFrom = findViewById(R.id.spFrom);
         Spinner spTo = findViewById(R.id.spTo);
 
+        Configuration newConfig = new Configuration();
+
+/*
+        // OnConfigurationChanged StartUp Check
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
+            setContentView(R.layout.landscape);
+        else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            setContentView(R.layout.activity_main);
+        }
+
+ */
 
         /********MethodReference********/
-        onConfigurationChanged(new Configuration());
+        onConfigurationChanged(newConfig);
         SpinnerAdapterMethod(spFrom, spTo);
         btnCalc.setOnClickListener(v -> calculation(valIn, valOut, spFrom, spTo));
     }
@@ -75,19 +84,27 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /********USABLE METHODS********/
-
-    //Phone Rotation Check
-    public void onConfigurationChanged(Configuration newConfig, Spinner spFrom, Spinner spTo) {
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
-            setContentView(R.layout.landscapeview);
+            setContentView(R.layout.landscape);
         else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.activity_main);
         }
+
+
+        Spinner spFrom = findViewById(R.id.spFrom);
+        Spinner spTo = findViewById(R.id.spTo);
+
         SpinnerAdapterMethod(spFrom, spTo);
     }
+
+    /********USABLE METHODS********/
+
+    //Phone Rotation Check
+
 
     //Create Spinner Adapter
     public void SpinnerAdapterMethod(Spinner spFrom, Spinner spTo) {
