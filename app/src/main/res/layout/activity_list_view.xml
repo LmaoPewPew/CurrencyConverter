@@ -9,19 +9,20 @@
         android:id="@+id/currencyListView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:text="@string/text" />
-
-    <TextView
-        android:id="@+id/exRateView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
         android:text="@string/text"
         android:textColor="@color/black"
-
         android:textSize="20sp" />
+    <!--
+        <TextView
+            android:id="@+id/exRateView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:text="@string/text"
+            android:textColor="@color/black"
+
+            android:textSize="20sp" />
+            -->
 
 
 </LinearLayout>

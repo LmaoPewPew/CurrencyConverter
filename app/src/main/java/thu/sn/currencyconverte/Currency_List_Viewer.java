@@ -3,21 +3,13 @@ package thu.sn.currencyconverte;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
-
-import java.util.List;
 
 public class Currency_List_Viewer extends AppCompatActivity {
 
-    ExchangeRateDatabase db = new ExchangeRateDatabase();
+    ExchangeRateDatabase erdb = new ExchangeRateDatabase();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,10 +24,10 @@ public class Currency_List_Viewer extends AppCompatActivity {
 
         //FOLLOW SCRIPTS
         //Just do the Flags for the spinner, fuck 2.5
-        //CustomBaseAdapter cba = new CustomBaseAdapter(getApplicationContext(), db.getCurrencies(), db.getExchangeRate());
+        //ExchangeRateAdapter exa = new ExchangeRateAdapter();
 
         ListView lv = (ListView) findViewById(R.id.curListView);
-        //lv.setAdapter(cba);
+        //lv.setAdapter(exa);
 
         lv.setOnItemClickListener((parent, view, position, id) -> mainAct());
     }
