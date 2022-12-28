@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         /********MethodReference********/
         onConfigurationChanged(newConfig);
         SpinnerAdapterMethod(spFrom, spTo);
+        //SpinnerAdapter(spFrom,spTo);
         btnCalc.setOnClickListener(v -> calculation(valIn, valOut, spFrom, spTo));
     }
 
@@ -108,6 +109,13 @@ public class MainActivity extends AppCompatActivity {
 
     //Create Spinner Adapter
     public void SpinnerAdapterMethod(Spinner spFrom, Spinner spTo) {
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, db.getCurrencies());
+        spFrom.setAdapter(adapter);
+        spTo.setAdapter(adapter);
+    }
+    //ExChangeRateAdapter
+    public void SpinnerAdapter(Spinner spFrom, Spinner spTo) {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, db.getCurrencies());
         spFrom.setAdapter(adapter);

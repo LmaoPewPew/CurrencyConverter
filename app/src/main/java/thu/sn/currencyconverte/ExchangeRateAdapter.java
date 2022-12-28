@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.util.Formatter;
 import java.util.List;
 
 public class ExchangeRateAdapter extends BaseAdapter {
@@ -45,8 +46,7 @@ public class ExchangeRateAdapter extends BaseAdapter {
             view = inflater.inflate(R.layout.activity_list_view, null, false);
         }
         TextView tv = view.findViewById(R.id.currencyListView);
-        tv.setText(currency + "\t" + exchangeRate);
-
+        tv.setText(currency + "\t\t\t\t\t" + exchangeRate + " (in €)");
         return view;
     }
 }
