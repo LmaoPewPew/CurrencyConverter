@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import java.util.Formatter;
 import java.util.List;
 
 public class ExchangeRateAdapter extends BaseAdapter {

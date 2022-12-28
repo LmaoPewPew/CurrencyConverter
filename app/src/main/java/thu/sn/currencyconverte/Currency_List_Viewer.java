@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ListView;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Currency_List_Viewer extends AppCompatActivity {
@@ -46,12 +45,4 @@ public class Currency_List_Viewer extends AppCompatActivity {
 
         lv.setOnItemClickListener((parent, view, position, id) -> mainAct());
     }
-
-    /*
-    private final List<ExchangeRate> rate_data;
-    public CurrencyEditAdapter(List<ExchangeRate> rate_data) {
-        this.rate_data = rate_data;
-    }
-    ExchangeRate rate = rate_data.get(i);
-     */
 }
