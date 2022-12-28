@@ -17,7 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-
 public class MainActivity extends AppCompatActivity {
 
     /********Set Global Variables Variables********/
@@ -26,43 +25,27 @@ public class MainActivity extends AppCompatActivity {
 
     /********ON CREATE METHODE********/
 
-    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         /********Set Local Variables Variables********/
-
-        Button btnCalc = findViewById(R.id.btnCalc);
-
-        TextView valIn = findViewById(R.id.ValInput);
-        TextView valOut = findViewById(R.id.ValOutput);
-
         Spinner spFrom = findViewById(R.id.spFrom);
         Spinner spTo = findViewById(R.id.spTo);
 
         Configuration newConfig = new Configuration();
 
-/*
-        // OnConfigurationChanged StartUp Check
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
-            setContentView(R.layout.landscape);
-        else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            setContentView(R.layout.activity_main);
-        }
-
- */
 
         /********MethodReference********/
         onConfigurationChanged(newConfig);
         SpinnerAdapterMethod(spFrom, spTo);
         //SpinnerAdapter(spFrom,spTo);
-        btnCalc.setOnClickListener(v -> calculation(valIn, valOut, spFrom, spTo));
     }
 
-    /********OVERRIDE METHODS********/
-    //3 Pointer-Menu (Actionbar Menu)
+
+    /********ACTIONBAR-MENU********/
+    //3 Pointer-Menu Actionbar Menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -71,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    // forward to Next Activity (Actionbar Menu)
+    // forward to Next Activity
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -85,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /********Orientations********/
+
+    //Phone Rotation Check
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -95,18 +81,24 @@ public class MainActivity extends AppCompatActivity {
             setContentView(R.layout.activity_main);
         }
 
+        createFunctions();
+    }
+
+    private void createFunctions() {
+
+        TextView valIn = findViewById(R.id.ValInput);
+        TextView valOut = findViewById(R.id.ValOutput);
 
         Spinner spFrom = findViewById(R.id.spFrom);
         Spinner spTo = findViewById(R.id.spTo);
-
         SpinnerAdapterMethod(spFrom, spTo);
+
+
+        Button btnCalc = findViewById(R.id.btnCalc);
+        btnCalc.setOnClickListener(v -> calculation(valIn, valOut, spFrom, spTo));
     }
 
-    /********USABLE METHODS********/
-
-    //Phone Rotation Check
-
-
+    /********One Method Use********///not meant as used once, but one method needed for it to work
     //Create Spinner Adapter
     public void SpinnerAdapterMethod(Spinner spFrom, Spinner spTo) {
 
@@ -114,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
         spFrom.setAdapter(adapter);
         spTo.setAdapter(adapter);
     }
+
     //ExChangeRateAdapter
     public void SpinnerAdapter(Spinner spFrom, Spinner spTo) {
 
