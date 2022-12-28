@@ -6,15 +6,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
-public class ExchangeRateAdapter extends BaseAdapter {
+public class CurrencyItemAdapter extends BaseAdapter {
     List<String> currencyList;
     ExchangeRateDatabase exRaDB = new ExchangeRateDatabase();
 
-    public ExchangeRateAdapter(List<String> currency) {
+    public CurrencyItemAdapter(List<String> currency) {
         this.currencyList = currency;
     }
 
@@ -39,14 +40,19 @@ public class ExchangeRateAdapter extends BaseAdapter {
         Context context = vGroup.getContext();
         String currency = exRaDB.getCurrencies()[position];
 
-        double exchangeRate = exRaDB.getExchangeRate(currency);
+        //change to Img
+        //double exchangeRate = exRaDB.getExchangeRate(currency);
 
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.activity_list_view, null, false);
         }
+
+        
+        int imageId = context.getResources().getIdentifier(), "drawable", context.getPackageName();
+
         TextView tv = view.findViewById(R.id.currencyListView);
-        tv.setText(currency + "\t\t\t\t\t" + exchangeRate + " (in €)");
+        tv.setText(currency);
         return view;
     }
 }

@@ -5,24 +5,19 @@
     android:layout_height="match_parent"
     tools:context=".ListView">
 
+    <ImageView
+        android:id="@+id/currencyImgView"
+        android:layout_width="48dp"
+        android:layout_height="48dp" />
+
     <TextView
         android:id="@+id/currencyListView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginRight="15dp"
+        android:gravity="center"
         android:text="@string/text"
         android:textColor="@color/black"
         android:textSize="20sp" />
-    <!--
-        <TextView
-            android:id="@+id/exRateView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:text="@string/text"
-            android:textColor="@color/black"
-
-            android:textSize="20sp" />
-            -->
-
 
 </LinearLayout>

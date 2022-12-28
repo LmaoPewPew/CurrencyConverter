@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -98,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         btnCalc.setOnClickListener(v -> calculation(valIn, valOut, spFrom, spTo));
     }
 
-    /********One Method Use********///not meant as used once, but one method needed for it to work
+    /********Simple Methods********/
     //Create Spinner Adapter
     public void SpinnerAdapterMethod(Spinner spFrom, Spinner spTo) {
 
@@ -107,12 +108,13 @@ public class MainActivity extends AppCompatActivity {
         spTo.setAdapter(adapter);
     }
 
-    //ExChangeRateAdapter
-    public void SpinnerAdapter(Spinner spFrom, Spinner spTo) {
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, db.getCurrencies());
-        spFrom.setAdapter(adapter);
-        spTo.setAdapter(adapter);
+    //ExChangeRateAdapter
+    public void SpinnerAdapter(Spinner spFrom, Spinner spTo, CurrencyItemAdapter dia) {
+        android.widget.ListView lv = (ListView) findViewById(R.id.ListView);
+        lv.setAdapter(dia);
+        spFrom.setAdapter(dia);
+        spTo.setAdapter(dia);
     }
 
     //Button Pressed

@@ -19,7 +19,7 @@ public class ExchangeRateDatabase {
             new ExchangeRate("RON", "Bucharest", 4.4050),
             new ExchangeRate("SEK", "Stockholm", 9.3207),
             new ExchangeRate("CHF", "Bern", 1.0439),
-            new ExchangeRate("ISK", "Rejkjavic", 141.10),
+            new ExchangeRate("ISK", "Reykjavik", 141.10),
             new ExchangeRate("NOK", "Oslo", 8.6545),
             new ExchangeRate("HRK", "Zagreb", 7.6448),
             new ExchangeRate("TRY", "Ankara", 2.8265),

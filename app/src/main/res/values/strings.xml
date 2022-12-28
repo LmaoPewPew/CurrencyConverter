@@ -6,7 +6,7 @@
     <string name="txtFill">0</string>
     <string name="calculate">Calculate</string>
     <string name="currency_list_view">Currency List View</string>
-    <string name="text">Text</string>
+    <string name="text">Currency</string>
 
     <string-array name="curr_arr">
         <item>EURO</item>

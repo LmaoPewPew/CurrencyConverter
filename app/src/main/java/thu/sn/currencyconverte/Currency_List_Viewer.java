@@ -15,17 +15,33 @@ public class Currency_List_Viewer extends AppCompatActivity {
 
     ExchangeRateDatabase db = new ExchangeRateDatabase();
 
+    /********ONCREATE********/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_currency_list_viewer);
         actionbarSettings();
 
-        ExchangeRateAdapter exa = new ExchangeRateAdapter(Arrays.asList(db.getCurrencies()));
-
-        listViewer(exa);
-
+        /********Methods********/
+        listViewer(new ExchangeRateAdapter(Arrays.asList(db.getCurrencies())));
     }
+
+
+    /********Show List View********/
+
+    private void mainAct() {
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
+    }
+
+    private void listViewer(ExchangeRateAdapter exa) {
+        ListView lv = (ListView) findViewById(R.id.ListView);
+        lv.setAdapter(exa);
+        lv.setOnItemClickListener((parent, view, position, id) -> mainAct());
+    }
+
+    /********Simple Methods********/
 
     private void actionbarSettings() {
         ActionBar actionBar = getSupportActionBar();
@@ -34,15 +50,5 @@ public class Currency_List_Viewer extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
-    private void mainAct() {
-        Intent i = new Intent(this, MainActivity.class);
-        startActivity(i);
-    }
 
-    private void listViewer(ExchangeRateAdapter exa) {
-        ListView lv = (ListView) findViewById(R.id.curListView);
-        lv.setAdapter(exa);
-
-        lv.setOnItemClickListener((parent, view, position, id) -> mainAct());
-    }
 }
