@@ -11,18 +11,33 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ShareActionProvider;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MenuItemCompat;
 
 
 public class MainActivity extends AppCompatActivity {
 
+
+    /**TODO::
+     * read flags in CurrencyItemAdapter getFlagId
+     * Use CIA for Spinners
+     * fix Share Button
+     *
+     * Currency_List_Viewer: Click Currency -> Open Google Maps with the capital
+     *
+     * if done, then exercise 5 onward:
+     */
+
     /********Set Global Variables Variables********/
 
     ExchangeRateDatabase db = new ExchangeRateDatabase();
+   private ShareActionProvider sap;
 
     /********ON CREATE METHODE********/
 
@@ -37,37 +52,47 @@ public class MainActivity extends AppCompatActivity {
 
         Configuration newConfig = new Configuration();
 
-
         /********MethodReference********/
         onConfigurationChanged(newConfig);
         SpinnerAdapterMethod(spFrom, spTo);
-        //SpinnerAdapter(spFrom,spTo);
+        //SpinnerAdapter(spFrom, spTo, new CurrencyItemAdapter(Arrays.asList(db.getCurrencies())));
     }
 
 
     /********ACTIONBAR-MENU********/
-    //3 Pointer-Menu Actionbar Menu
+    //actionbar menu items
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
 
+
+        MenuItem menuItem = menu.findItem(R.id.item_share);
+        //sap = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+
         return super.onCreateOptionsMenu(menu);
     }
 
-    // forward to Next Activity
+
+    // MenuItem Interaction
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.List:
+            case R.id.item_list:
                 Intent i = new Intent(this, Currency_List_Viewer.class);
                 startActivity(i);
                 break;
-
+            case R.id.item_refresh:
+                checkForUpdates();
+                break;
+            case R.id.item_share:
+              share();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     /********Orientations********/
 
@@ -99,7 +124,32 @@ public class MainActivity extends AppCompatActivity {
         btnCalc.setOnClickListener(v -> calculation(valIn, valOut, spFrom, spTo));
     }
 
-    /********Simple Methods********/
+    private void checkForUpdates() {
+        Toast.makeText(this, "Checking for Updates", Toast.LENGTH_LONG).show();
+    }
+
+    /********Share Function********/
+/*
+    private void setShareText(String text) {
+        ShareActionProvider shareActionProvider = new ShareActionProvider(this);
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        if (text != null) {
+            shareIntent.putExtra(Intent.EXTRA_TEXT, text);
+        }
+        shareActionProvider.setShareIntent(shareIntent);
+    }
+    */
+    private void share() {
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, "Share");
+        sap.setShareIntent(intent);
+
+        Toast.makeText(this, "Share", Toast.LENGTH_LONG).show();
+    }
+
     //Create Spinner Adapter
     public void SpinnerAdapterMethod(Spinner spFrom, Spinner spTo) {
 
@@ -111,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
     //ExChangeRateAdapter
     public void SpinnerAdapter(Spinner spFrom, Spinner spTo, CurrencyItemAdapter dia) {
-        android.widget.ListView lv = (ListView) findViewById(R.id.ListView);
+        ListView lv = findViewById(R.id.ListView);
         lv.setAdapter(dia);
         spFrom.setAdapter(dia);
         spTo.setAdapter(dia);

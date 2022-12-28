@@ -23,22 +23,21 @@ public class Currency_List_Viewer extends AppCompatActivity {
         setContentView(R.layout.activity_currency_list_viewer);
         actionbarSettings();
 
-        /********Methods********/
+        /*******Methods********/
         listViewer(new ExchangeRateAdapter(Arrays.asList(db.getCurrencies())));
     }
 
 
     /********Show List View********/
 
-    private void mainAct() {
-        Intent i = new Intent(this, MainActivity.class);
-        startActivity(i);
-    }
 
     private void listViewer(ExchangeRateAdapter exa) {
         ListView lv = (ListView) findViewById(R.id.ListView);
         lv.setAdapter(exa);
-        lv.setOnItemClickListener((parent, view, position, id) -> mainAct());
+        lv.setOnItemClickListener((parent, view, position, id) -> openMaps());
+    }
+    private void openMaps() {
+        //open GoogleMaps  with the Capital
     }
 
     /********Simple Methods********/

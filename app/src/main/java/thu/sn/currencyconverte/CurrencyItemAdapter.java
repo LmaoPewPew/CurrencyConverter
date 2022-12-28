@@ -13,6 +13,7 @@ import java.util.List;
 
 public class CurrencyItemAdapter extends BaseAdapter {
     List<String> currencyList;
+    List<ExchangeRate> rate_data;
     ExchangeRateDatabase exRaDB = new ExchangeRateDatabase();
 
     public CurrencyItemAdapter(List<String> currency) {
@@ -38,21 +39,27 @@ public class CurrencyItemAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View view, ViewGroup vGroup) {
         Context context = vGroup.getContext();
-        String currency = exRaDB.getCurrencies()[position];
-
-        //change to Img
-        //double exchangeRate = exRaDB.getExchangeRate(currency);
-
+        ExchangeRate rate = rate_data.get(position);
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.activity_list_view, null, false);
         }
 
-        
-        int imageId = context.getResources().getIdentifier(), "drawable", context.getPackageName();
-
         TextView tv = view.findViewById(R.id.currencyListView);
-        tv.setText(currency);
+        tv.setText(rate.getCurrencyName());
+        ImageView imageView = view.findViewById(R.id.currencyImgView);
+
+        int imageId = context.getResources().getIdentifier(getFlagId(rate), "drawable", context.getPackageName());
+
+        imageView.setImageResource(imageId);
         return view;
     }
+
+    private String getFlagId(ExchangeRate rate) {
+
+
+
+        return "";
+    }
+
 }

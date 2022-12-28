@@ -7,6 +7,9 @@
     <string name="calculate">Calculate</string>
     <string name="currency_list_view">Currency List View</string>
     <string name="text">Currency</string>
+    <string name="refresh_updates">Refresh Updates</string>
+    <string name="share">Share</string>
+    <string name="more">More</string>
 
     <string-array name="curr_arr">
         <item>EURO</item>
