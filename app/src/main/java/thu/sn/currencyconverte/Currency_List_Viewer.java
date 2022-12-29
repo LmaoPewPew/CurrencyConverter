@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.ListView;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class Currency_List_Viewer extends AppCompatActivity {
 
@@ -45,17 +46,18 @@ public class Currency_List_Viewer extends AppCompatActivity {
     private void listViewer(ExchangeRateAdapter exa) {
         ListView lv = (ListView) findViewById(R.id.ListView);
         lv.setAdapter(exa);
-        lv.setOnItemClickListener((parent, view, position, id) -> showMaps());
+
+        lv.setOnItemClickListener((parent, view, position, id) -> showMaps(position, lv));
     }
 
 
     /********Open Maps********/
 
 
-    private void showMaps() {
-        //IDEA: get Currency from Listviewer to pass one here!
+    private void showMaps(int pos, ListView lv) {
+        String location = (String) lv.getItemAtPosition(pos);
+        Log.d("CURRENCY_POSITION", location);
 
-        String location = "JPY";
         openMaps(db.getCapital(location));
     }
 

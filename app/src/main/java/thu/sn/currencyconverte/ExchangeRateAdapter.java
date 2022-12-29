@@ -47,7 +47,8 @@ public class ExchangeRateAdapter extends BaseAdapter {
             view = inflater.inflate(R.layout.activity_list_view, null, false);
         }
         TextView tv = view.findViewById(R.id.currencyListView);
-        tv.setText(currency + "\t\t\t\t\t" + exchangeRate + " (in €)");
+        //TODO: remove position!
+        tv.setText(position + ":\t\t" + currency + "\t\t\t\t\t" + exchangeRate + " (in €)");
         return view;
     }
 }
