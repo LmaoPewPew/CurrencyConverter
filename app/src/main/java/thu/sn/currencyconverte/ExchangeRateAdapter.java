@@ -60,7 +60,7 @@ public class ExchangeRateAdapter extends BaseAdapter {
         currencyText.setText(currency);
 
         TextView moneyText = view.findViewById(R.id.currencyExChangeView);
-        moneyText.setText(exchangeRate + "(€)");
+        moneyText.setText(exchangeRate + "€");
         return view;
     }
 }
