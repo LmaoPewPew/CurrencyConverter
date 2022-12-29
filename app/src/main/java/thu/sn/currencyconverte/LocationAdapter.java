@@ -2,7 +2,6 @@ package thu.sn.currencyconverte;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +10,12 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class ExchangeRateAdapter extends BaseAdapter {
+public class LocationAdapter extends BaseAdapter {
+
     List<String> currencyList;
     ExchangeRateDatabase exRaDB = new ExchangeRateDatabase();
 
-    public ExchangeRateAdapter(List<String> currency) {
+    public LocationAdapter(List<String> currency) {
         this.currencyList = currency;
     }
 
@@ -37,6 +37,7 @@ public class ExchangeRateAdapter extends BaseAdapter {
     @SuppressLint({"SetTextI18n", "InflateParams"})
     @Override
     public View getView(int position, View view, ViewGroup vGroup) {
+
         Context context = vGroup.getContext();
         String currency = exRaDB.getCurrencies()[position];
 

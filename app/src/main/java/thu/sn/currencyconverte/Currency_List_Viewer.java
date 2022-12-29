@@ -4,7 +4,9 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ListView;
 
 import java.util.Arrays;
@@ -14,6 +16,7 @@ public class Currency_List_Viewer extends AppCompatActivity {
     /********Set Global Variables Variables********/
 
     ExchangeRateDatabase db = new ExchangeRateDatabase();
+
 
     /********ONCREATE********/
 
@@ -27,20 +30,7 @@ public class Currency_List_Viewer extends AppCompatActivity {
         listViewer(new ExchangeRateAdapter(Arrays.asList(db.getCurrencies())));
     }
 
-
-    /********Show List View********/
-
-
-    private void listViewer(ExchangeRateAdapter exa) {
-        ListView lv = (ListView) findViewById(R.id.ListView);
-        lv.setAdapter(exa);
-        lv.setOnItemClickListener((parent, view, position, id) -> openMaps());
-    }
-    private void openMaps() {
-        //open GoogleMaps  with the Capital
-    }
-
-    /********Simple Methods********/
+    /********ActionbarSettings********/
 
     private void actionbarSettings() {
         ActionBar actionBar = getSupportActionBar();
@@ -49,5 +39,33 @@ public class Currency_List_Viewer extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
+    /********Show List View********/
+
+
+    private void listViewer(ExchangeRateAdapter exa) {
+        ListView lv = (ListView) findViewById(R.id.ListView);
+        lv.setAdapter(exa);
+        lv.setOnItemClickListener((parent, view, position, id) -> showMaps());
+    }
+
+
+    /********Open Maps********/
+
+
+    private void showMaps() {
+        //IDEA: get Currency from Listviewer to pass one here!
+
+        String location = "JPY";
+        openMaps(db.getCapital(location));
+    }
+
+
+    private void openMaps(String location) {
+        //open GoogleMaps  with the Capital
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0`?q=" + location));
+        mapIntent.setPackage("com.google.android.apps.maps");
+        startActivity(mapIntent);
+
+    }
 
 }
