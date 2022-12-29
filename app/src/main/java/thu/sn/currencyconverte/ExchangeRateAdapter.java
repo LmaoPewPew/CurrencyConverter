@@ -48,7 +48,7 @@ public class ExchangeRateAdapter extends BaseAdapter {
         }
         TextView tv = view.findViewById(R.id.currencyListView);
         //TODO: remove position!
-        tv.setText(position + ":\t\t" + currency + "\t\t\t\t\t" + exchangeRate + " (in €)");
+        tv.setText(currency + "\t\t\t\t\t" + exchangeRate + " (in €)");
         return view;
     }
 }
