@@ -50,9 +50,7 @@ public class Currency_List_Viewer extends AppCompatActivity {
         lv.setOnItemClickListener((parent, view, position, id) -> showMaps(position, lv));
     }
 
-
     /********Open Maps********/
-
 
     private void showMaps(int pos, ListView lv) {
         String location = (String) lv.getItemAtPosition(pos);
