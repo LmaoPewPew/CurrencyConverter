@@ -7,9 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Locale;
 
 public class ExchangeRateAdapter extends BaseAdapter {
     List<String> currencyList;
@@ -39,16 +41,26 @@ public class ExchangeRateAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup vGroup) {
         Context context = vGroup.getContext();
         String currency = exRaDB.getCurrencies()[position];
-
         double exchangeRate = exRaDB.getExchangeRate(currency);
+
+        String imageNameFile = "flag_" + currency.toLowerCase();
+        int imageId = context.getResources().getIdentifier(imageNameFile, "drawable", context.getPackageName());
+
 
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.activity_list_view, null, false);
         }
-        TextView tv = view.findViewById(R.id.currencyListView);
-        //TODO: remove position!
-        tv.setText(currency + "\t\t\t\t\t" + exchangeRate + " (in €)");
+
+        ImageView imageView = view.findViewById(R.id.currencyImgView);
+
+        imageView.setImageResource(imageId);
+
+        TextView currencyText = view.findViewById(R.id.currencyListView);
+        currencyText.setText(currency);
+
+        TextView moneyText = view.findViewById(R.id.currencyExChangeView);
+        moneyText.setText(exchangeRate + "(€)");
         return view;
     }
 }

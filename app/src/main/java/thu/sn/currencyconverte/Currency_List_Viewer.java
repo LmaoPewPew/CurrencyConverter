@@ -6,11 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ListView;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class Currency_List_Viewer extends AppCompatActivity {
 
@@ -27,7 +25,6 @@ public class Currency_List_Viewer extends AppCompatActivity {
         setContentView(R.layout.activity_currency_list_viewer);
         actionbarSettings();
 
-        /*******Methods********/
         listViewer(new ExchangeRateAdapter(Arrays.asList(db.getCurrencies())));
     }
 
@@ -47,15 +44,12 @@ public class Currency_List_Viewer extends AppCompatActivity {
         ListView lv = (ListView) findViewById(R.id.ListView);
         lv.setAdapter(exa);
 
-        lv.setOnItemClickListener((parent, view, position, id) -> showMaps(position, lv));
+        lv.setOnItemClickListener((parent, view, position, id) -> getLocation(position, lv));
     }
 
     /********Open Maps********/
-
-    private void showMaps(int pos, ListView lv) {
+    private void getLocation(int pos, ListView lv) {
         String location = (String) lv.getItemAtPosition(pos);
-        Log.d("CURRENCY_POSITION", location);
-
         openMaps(db.getCapital(location));
     }
 
