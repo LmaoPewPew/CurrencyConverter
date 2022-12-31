@@ -2,7 +2,6 @@ package thu.sn.currencyconverte;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.Locale;
 
 public class ExchangeRateAdapter extends BaseAdapter {
     List<String> currencyList;
@@ -60,7 +58,8 @@ public class ExchangeRateAdapter extends BaseAdapter {
         currencyText.setText(currency);
 
         TextView moneyText = view.findViewById(R.id.currencyExChangeView);
-        moneyText.setText(exchangeRate + "€");
+        final double roundedExchangeRate = Math.floor(exchangeRate * 100) / 100;
+        moneyText.setText(roundedExchangeRate + "€");
         return view;
     }
 }

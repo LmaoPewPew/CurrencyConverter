@@ -7,9 +7,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,8 +23,11 @@ import java.util.Arrays;
 public class MainActivity extends AppCompatActivity {
 
 
-    /**TODO::
-     * if done, then exercise 5 onward:
+    /*TODO::
+      5: Daily Update of Rates via API
+      7: Store and restore (+ Music player)
+      8: Update app
+      9: Toast
      */
 
     /********Set Global Variables Variables********/
@@ -67,8 +68,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.item_list:
-                Intent i = new Intent(this, Currency_List_Viewer.class);
-                startActivity(i);
+                Intent listViewerIntent = new Intent(this, Currency_List_Viewer.class);
+                startActivity(listViewerIntent);
                 break;
             case R.id.item_refresh:
                 checkForUpdates();

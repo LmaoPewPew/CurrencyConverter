@@ -6,8 +6,8 @@
         android:id="@+id/item_share"
         android:icon="@drawable/ic_baseline_share_24"
         android:title="@string/share"
-        app:showAsAction="ifRoom"
-    app:actionProviderClass="androidx.appcompat.widget.ShareActionProvider"/>
+        app:actionProviderClass="androidx.appcompat.widget.ShareActionProvider"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/More"
@@ -22,7 +22,7 @@
             <item
                 android:id="@+id/item_refresh"
                 android:icon="@drawable/ic_baseline_update_24"
-                android:title="@string/refresh_updates" />
+                android:title="@string/refresh_rates" />
         </menu>
     </item>
 

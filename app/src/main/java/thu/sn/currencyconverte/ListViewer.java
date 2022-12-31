@@ -1,8 +1,8 @@
 package thu.sn.currencyconverte;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class ListViewer extends AppCompatActivity {
 
