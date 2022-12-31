@@ -43,8 +43,6 @@ public class MainActivity extends AppCompatActivity {
 
         onConfigurationChanged(getResources().getConfiguration());
         SpinnerAdapter(new ExchangeRateAdapter(Arrays.asList(db.getCurrencies())));
-
-
     }
 
     /********ACTIONBAR-MENU********/
