@@ -3,6 +3,7 @@ package thu.sn.currencyconverte;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -31,12 +32,10 @@ public class MainActivity extends AppCompatActivity {
      */
 
     /********Set Global Variables Variables********/
-
     ExchangeRateDatabase db = new ExchangeRateDatabase();
     private ShareActionProvider sap;
 
     /********ON CREATE METHODE********/
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,14 +43,16 @@ public class MainActivity extends AppCompatActivity {
 
         onConfigurationChanged(getResources().getConfiguration());
         SpinnerAdapter(new ExchangeRateAdapter(Arrays.asList(db.getCurrencies())));
-    }
 
+
+    }
 
     /********ACTIONBAR-MENU********/
     //actionbar menu items
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         TextView result = (TextView) findViewById(R.id.ValOutput);
+
         getMenuInflater().inflate(R.menu.menu, menu);
 
         MenuItem shareItem = menu.findItem(R.id.item_share);
@@ -61,11 +62,11 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-
     // MenuItem Interaction
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
         switch (item.getItemId()) {
             case R.id.item_list:
                 Intent listViewerIntent = new Intent(this, Currency_List_Viewer.class);
@@ -78,9 +79,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     /********Orientations********/
-
     //Phone Rotation Check
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
@@ -96,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createFunctions() {
-
         TextView valIn = findViewById(R.id.ValInput);
         TextView valOut = findViewById(R.id.ValOutput);
 
@@ -105,7 +103,27 @@ public class MainActivity extends AppCompatActivity {
         SpinnerAdapter(new ExchangeRateAdapter(Arrays.asList(db.getCurrencies())));
 
         Button btnCalc = findViewById(R.id.btnCalc);
+        btnCalc.setTextSize(20f);
         btnCalc.setOnClickListener(v -> calculation(valIn, valOut, spFrom, spTo));
+
+        checkTheme(valIn);
+        checkTheme(valOut);
+    }
+
+    private void checkTheme(TextView textView) {
+        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        switch (nightModeFlags) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                textView.setTextColor(Color.WHITE);
+                break;
+            case Configuration.UI_MODE_NIGHT_NO:
+                textView.setTextColor(Color.BLACK);
+                break;
+
+            case Configuration.UI_MODE_NIGHT_UNDEFINED:
+                textView.setTextColor(Color.DKGRAY);
+                break;
+        }
     }
 
     private void checkForUpdates() {
@@ -113,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /********Share Function********/
-
     private void setShareText(String text) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
@@ -123,19 +140,19 @@ public class MainActivity extends AppCompatActivity {
         sap.setShareIntent(shareIntent);
     }
 
-
     /********Adapter********/
-    //Create Spinner Adapter
     public void SpinnerAdapter(ExchangeRateAdapter adapter) {
         Spinner spFrom = findViewById(R.id.spFrom);
         Spinner spTo = findViewById(R.id.spTo);
 
         spFrom.setAdapter(adapter);
         spTo.setAdapter(adapter);
+
+        spFrom.setSelection(8);
+        spTo.setSelection(30);
     }
 
     /********Calculate********/
-    //Button Pressed
     @SuppressLint("SetTextI18n")
     public void calculation(TextView in, TextView out, Spinner spFrom, Spinner spTo) {
         if (TextUtils.isEmpty(in.getText().toString())) out.setText("0");
@@ -145,6 +162,5 @@ public class MainActivity extends AppCompatActivity {
 
             out.setText(Double.toString(conversion));
         }
-
     }
 }
