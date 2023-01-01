@@ -59,7 +59,7 @@ public class ExchangeRateAdapter extends BaseAdapter {
         currencyText.setText(currency);
 
         TextView moneyText = view.findViewById(R.id.currencyExChangeView);
-        final double roundedExchangeRate = Math.floor(exchangeRate * 100) / 100;
+        final double roundedExchangeRate = /**/Math.floor(exchangeRate * 100) / 100; //*/ exchangeRate;
         moneyText.setText(roundedExchangeRate + "€");
 
         currencyText.setTextColor(Color.DKGRAY);

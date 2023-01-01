@@ -1,11 +1,15 @@
 package thu.sn.currencyconverte;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -15,9 +19,15 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.ShareActionProvider;
 import androidx.core.view.MenuItemCompat;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
+
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Arrays;
 
 
@@ -34,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     /********Set Global Variables Variables********/
     ExchangeRateDatabase db = new ExchangeRateDatabase();
     private ShareActionProvider sap;
+    int firstStart = 1;
 
     /********ON CREATE METHODE********/
     @Override
@@ -41,21 +52,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        updateCurrencies();
+        spinnerAdapter(new ExchangeRateAdapter(Arrays.asList(db.getCurrencies())));
+
         onConfigurationChanged(getResources().getConfiguration());
-        SpinnerAdapter(new ExchangeRateAdapter(Arrays.asList(db.getCurrencies())));
     }
 
     /********ACTIONBAR-MENU********/
     //actionbar menu items
+    @SuppressLint("RestrictedApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         TextView result = (TextView) findViewById(R.id.ValOutput);
-
         getMenuInflater().inflate(R.menu.menu, menu);
+
 
         MenuItem shareItem = menu.findItem(R.id.item_share);
         sap = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
         setShareText(result.getText().toString());
+
+        if (menu instanceof MenuBuilder) {
+            MenuBuilder m = (MenuBuilder) menu;
+            m.setOptionalIconsVisible(true);
+        }
 
         return true;
     }
@@ -69,9 +88,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.item_list:
                 Intent listViewerIntent = new Intent(this, Currency_List_Viewer.class);
                 startActivity(listViewerIntent);
+                makeToast("Currency List");
                 break;
             case R.id.item_refresh:
-                checkForUpdates();
+                updateCurrencies();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -83,9 +103,9 @@ public class MainActivity extends AppCompatActivity {
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             setContentView(R.layout.landscape);
-        else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.activity_main);
         }
 
@@ -98,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
         Spinner spFrom = findViewById(R.id.spFrom);
         Spinner spTo = findViewById(R.id.spTo);
-        SpinnerAdapter(new ExchangeRateAdapter(Arrays.asList(db.getCurrencies())));
+        spinnerAdapter(new ExchangeRateAdapter(Arrays.asList(db.getCurrencies())));
 
         Button btnCalc = findViewById(R.id.btnCalc);
         btnCalc.setTextSize(20f);
@@ -108,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
         checkTheme(valOut);
     }
 
+    /********Dark/White Mode********/
     private void checkTheme(TextView textView) {
         int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         switch (nightModeFlags) {
@@ -124,8 +145,56 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void checkForUpdates() {
-        Toast.makeText(this, "Checking for Updates", Toast.LENGTH_LONG).show();
+
+    /********Refresh Cur-Rates********/
+    private void updateCurrencies() {
+        if (isNetworkAvailable()) {
+            makeToast("Checking for Updates");
+            ExchangeRateAdapter exa = new ExchangeRateAdapter(Arrays.asList(db.getCurrencies()));
+
+            currencyAPI();
+            exa.notifyDataSetChanged();
+
+            makeToast("All Currencies are Up to Date");
+        } else makeToast("internet-connection is unavailable");
+    }
+
+    private void currencyAPI() {
+
+
+        Thread thread = new Thread(() -> {
+
+            String webString = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+            try {
+                URL url = new URL(webString);
+                URLConnection connection = url.openConnection();
+                XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+                parser.setInput(connection.getInputStream(), connection.getContentEncoding());
+                int eventType = parser.getEventType();
+                while (eventType != XmlPullParser.END_DOCUMENT) {
+                    if (eventType == XmlPullParser.START_TAG) {
+                        if (parser.getName().equals("Cube")) {
+                            String currency = parser.getAttributeValue(null, "currency");
+                            String rate = parser.getAttributeValue(null, "rate");
+                            if (currency != null && rate != null) {
+                                ExchangeRateDatabase.setExchangeRate(currency, Double.parseDouble(rate));
+                                Log.d("Currency", currency + " | " + rate);
+                            }
+                        }
+                    }
+                    eventType = parser.next();
+                }
+            } catch (Exception e) {
+                Log.e("ErrorURL", "Error with XML: " + e.getMessage());
+                throw new RuntimeException(e);
+            }
+        });
+        thread.start();
+    }
+
+    /********Makes fresh Toast********/
+    public void makeToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     /********Share Function********/
@@ -139,15 +208,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /********Adapter********/
-    public void SpinnerAdapter(ExchangeRateAdapter adapter) {
+    public void spinnerAdapter(ExchangeRateAdapter adapter) {
         Spinner spFrom = findViewById(R.id.spFrom);
         Spinner spTo = findViewById(R.id.spTo);
 
         spFrom.setAdapter(adapter);
         spTo.setAdapter(adapter);
 
-        spFrom.setSelection(8);
-        spTo.setSelection(30);
+        if (firstStart == 1) {
+            spFrom.setSelection(8);
+            spTo.setSelection(30);
+            firstStart = 0;
+        }
     }
 
     /********Calculate********/
@@ -160,5 +232,13 @@ public class MainActivity extends AppCompatActivity {
 
             out.setText(Double.toString(conversion));
         }
+    }
+
+    /********CheckInternet********/
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

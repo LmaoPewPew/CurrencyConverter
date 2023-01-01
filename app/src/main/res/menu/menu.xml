@@ -11,22 +11,16 @@
 
 
     <item
-        android:id="@+id/More"
-        android:name="android:actionMenuTextColor"
-        android:icon="@drawable/ic_baseline_more_vert_24"
-        android:title="@string/more"
-        app:showAsAction="ifRoom">
-        <menu>
-            <item
-                android:id="@+id/item_list"
-                android:icon="@drawable/ic_currencylist"
-                android:title="@string/currency_list_view" />
-            <item
-                android:id="@+id/item_refresh"
-                android:icon="@drawable/ic_baseline_update_24"
-                android:title="@string/refresh_rates" />
-        </menu>
+        android:id="@+id/item_list"
+        android:icon="@drawable/ic_currencylist"
+        android:title="@string/currency_list_view"
+        android:visible="true" />
 
-    </item>
+    <item
+        android:id="@+id/item_refresh"
+        android:icon="@drawable/ic_baseline_update_24"
+        android:title="@string/refresh_rates"
+        android:visible="true" />
+
 
 </menu>
