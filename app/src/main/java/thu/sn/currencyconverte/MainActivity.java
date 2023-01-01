@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     /*TODO::
-      5: Daily Update of Rates via API
       7: Store and restore (+ Music player)
       8: Update app
       9: Toast
@@ -44,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
     /********Set Global Variables Variables********/
     ExchangeRateDatabase db = new ExchangeRateDatabase();
     private ShareActionProvider sap;
-    int firstStart = 1;
 
     /********ON CREATE METHODE********/
     @Override
@@ -53,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         updateCurrencies();
-        spinnerAdapter(new ExchangeRateAdapter(Arrays.asList(db.getCurrencies())));
 
+        spinnerAdapter(new ExchangeRateAdapter(Arrays.asList(db.getCurrencies())));
         onConfigurationChanged(getResources().getConfiguration());
     }
 
@@ -75,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
             MenuBuilder m = (MenuBuilder) menu;
             m.setOptionalIconsVisible(true);
         }
-
         return true;
     }
 
@@ -86,12 +83,15 @@ public class MainActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.item_list:
-                Intent listViewerIntent = new Intent(this, Currency_List_Viewer.class);
-                startActivity(listViewerIntent);
+                Intent CurrencyIntent = new Intent(this, Currency_List_Viewer.class);
+                startActivity(CurrencyIntent);
                 makeToast("Currency List");
                 break;
             case R.id.item_refresh:
                 updateCurrencies();
+
+                Intent MainIntent = new Intent(this, MainActivity.class);
+                startActivity(MainIntent);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -157,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
 
             makeToast("All Currencies are Up to Date");
         } else makeToast("internet-connection is unavailable");
+
     }
 
     private void currencyAPI() {
@@ -215,11 +216,10 @@ public class MainActivity extends AppCompatActivity {
         spFrom.setAdapter(adapter);
         spTo.setAdapter(adapter);
 
-        if (firstStart == 1) {
-            spFrom.setSelection(8);
-            spTo.setSelection(30);
-            firstStart = 0;
-        }
+
+        spFrom.setSelection(8);
+        spTo.setSelection(30);
+
     }
 
     /********Calculate********/
@@ -236,8 +236,7 @@ public class MainActivity extends AppCompatActivity {
 
     /********CheckInternet********/
     private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }

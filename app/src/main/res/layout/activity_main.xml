@@ -13,14 +13,15 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:text="@string/from_value_in"
+        android:textColor="#000000"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TextContrastCheck" />
 
     <Spinner
         android:id="@+id/spFrom"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_marginEnd="64dp"
         app:layout_constraintBottom_toBottomOf="@+id/txtFrom"
         app:layout_constraintEnd_toEndOf="@+id/ValInput"
         app:layout_constraintStart_toEndOf="@+id/txtFrom"
