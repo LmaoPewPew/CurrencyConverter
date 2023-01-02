@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -54,12 +56,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         checkThemeActionBar();
-
         createFunctions();
         spinnerAdapter(ExchangeRateDatabaseAccess.getExchangeRateAdapter());
 
         schedulePeriodicCounting();
-
     }
 
     @Override
@@ -80,12 +80,12 @@ public class MainActivity extends AppCompatActivity {
         editor.putString("textView2", valOut.getText().toString());
 
         editor.apply();
-
-    /*
+/*
         for (String currency : db.getCurrencies()) {
             editor.putFloat(currency, (float) ExchangeRateDatabase.getExchangeRate(currency));
     }
-    */
+
+ */
 
         WorkRequest rateUpdateRequest = new OneTimeWorkRequest.Builder(ExchangeRateUpdateWorker.class).build();
         WorkManager.getInstance(this).enqueue(rateUpdateRequest);
@@ -111,11 +111,13 @@ public class MainActivity extends AppCompatActivity {
         valOut.setText(valOutString);
         spFrom.setSelection(db.getIndexOf(spFromString));
         spTo.setSelection(db.getIndexOf(spToString));
-    /*
+
+        /*
         for (String currency : db.getCurrencies()) {
             ExchangeRateDatabase.setExchangeRate(currency, pref.getFloat(currency, 0));
         }
-    */
+        */
+
 
         WorkRequest rateUpdateRequest = new OneTimeWorkRequest.Builder(ExchangeRateUpdateWorker.class).build();
         WorkManager.getInstance(this).enqueue(rateUpdateRequest);
@@ -162,8 +164,8 @@ public class MainActivity extends AppCompatActivity {
         Spinner spFrom = findViewById(R.id.spFrom);
         Spinner spTo = findViewById(R.id.spTo);
 
-        spFrom.setSelection(Arrays.asList(db.getCurrencies()).indexOf(savedInstanceState.getString("spinner1")));
-        spTo.setSelection(Arrays.asList(db.getCurrencies()).indexOf(savedInstanceState.getString("spinner2")));
+        spFrom.setSelection(Arrays.asList(ExchangeRateDatabase.getCurrencies()).indexOf(savedInstanceState.getString("spinner1")));
+        spTo.setSelection(Arrays.asList(ExchangeRateDatabase.getCurrencies()).indexOf(savedInstanceState.getString("spinner2")));
         valOut.setText(savedInstanceState.getString("textView"));
     }
 
@@ -178,22 +180,22 @@ public class MainActivity extends AppCompatActivity {
                 createToast("Currency List");
                 break;
             case R.id.item_update:
-                WorkRequest rateUpdateRequest = new OneTimeWorkRequest.Builder(ExchangeRateUpdateWorker.class).build();
-                WorkManager.getInstance(this).enqueue(rateUpdateRequest);
+                if (isNetworkAvailable()) {
+                    WorkRequest rateUpdateRequest = new OneTimeWorkRequest.Builder(ExchangeRateUpdateWorker.class).build();
+                    WorkManager.getInstance(this).enqueue(rateUpdateRequest);
 
-                Intent MainIntent = new Intent(this, MainActivity.class);
-                startActivity(MainIntent);
+                    Intent MainIntent = new Intent(this, MainActivity.class);
+                    startActivity(MainIntent);
 
+                    this.runOnUiThread(runnable);
+                } else createToast("Internet Connection Unavailable");
                 break;
             case R.id.item_reset:
                 Log.d("Reset", "hi");
                 resetValues();
         }
-
-
         return super.onOptionsItemSelected(item);
     }
-
 
     @SuppressLint("SetTextI18n")
     public void calculation(TextView in, TextView out, Spinner spFrom, Spinner spTo) {
@@ -223,23 +225,11 @@ public class MainActivity extends AppCompatActivity {
         TextView textFrom = findViewById(R.id.txtFrom);
         TextView textTo = findViewById(R.id.txtFrom2);
 
-
-        MenuItem reset = findViewById(R.id.item_reset);
-        MenuItem list = findViewById(R.id.item_list);
-        MenuItem update = findViewById(R.id.item_update);
-
-
         checkTheme(textFrom);
         checkTheme(textTo);
         checkTheme(valIn);
         checkTheme(valOut);
         checkTheme(btnCalc);
-/*
-        checkTheme(reset);
-        checkTheme(list);
-        checkTheme(update);
-*/
-        //checkTheme(share);
 
     }
 
@@ -344,5 +334,11 @@ public class MainActivity extends AppCompatActivity {
         valOut.setText("");
         spFrom.setSelection(8);
         spTo.setSelection(30);
+    }
+
+    boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

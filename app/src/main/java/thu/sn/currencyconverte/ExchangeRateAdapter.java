@@ -17,8 +17,6 @@ import java.util.List;
 
 public class ExchangeRateAdapter extends BaseAdapter {
     List<String> currencyList;
-    ExchangeRateDatabase db = new ExchangeRateDatabase();
-    private Context context;
 
     public ExchangeRateAdapter(List<String> currency) {
         this.currencyList = currency;
@@ -43,7 +41,7 @@ public class ExchangeRateAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View view, ViewGroup vGroup) {
         Context context = vGroup.getContext();
-        String currency = db.getCurrencies()[position];
+        String currency = ExchangeRateDatabase.getCurrencies()[position];
 
         DecimalFormat df = new DecimalFormat("0.0000");
         df.setRoundingMode(RoundingMode.DOWN);
@@ -52,7 +50,6 @@ public class ExchangeRateAdapter extends BaseAdapter {
         String imageNameFile = "flag_" + currency.toLowerCase();
 
         @SuppressLint("DiscouragedApi") int imageId = context.getResources().getIdentifier(imageNameFile, "drawable", context.getPackageName());
-
 
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

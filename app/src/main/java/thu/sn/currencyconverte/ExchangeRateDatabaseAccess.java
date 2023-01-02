@@ -16,7 +16,7 @@ public class ExchangeRateDatabaseAccess {
 
     public static ExchangeRateAdapter getExchangeRateAdapter() {
         if (adapter == null) {
-            adapter = new ExchangeRateAdapter(Arrays.asList(db.getCurrencies()));
+            adapter = new ExchangeRateAdapter(Arrays.asList(ExchangeRateDatabase.getCurrencies()));
         }
         return adapter;
     }

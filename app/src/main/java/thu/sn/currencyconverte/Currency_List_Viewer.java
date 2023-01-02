@@ -17,7 +17,7 @@ public class Currency_List_Viewer extends AppCompatActivity {
     ExchangeRateDatabase db = new ExchangeRateDatabase();
 
 
-    /********ONCREATE********/
+    /********ON CREATE********/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +25,7 @@ public class Currency_List_Viewer extends AppCompatActivity {
         setContentView(R.layout.activity_currency_list_viewer);
         actionbarSettings();
 
-        listViewer(new ExchangeRateAdapter(Arrays.asList(db.getCurrencies())));
+        listViewer(new ExchangeRateAdapter(Arrays.asList(ExchangeRateDatabase.getCurrencies())));
 
     }
 

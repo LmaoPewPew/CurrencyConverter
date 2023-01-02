@@ -59,7 +59,7 @@ public class ExchangeRateDatabase {
     /**
      * @return List of currency names
      */
-    public String[] getCurrencies() {
+    public static String[] getCurrencies() {
         return CURRENCIES_LIST;
     }
 

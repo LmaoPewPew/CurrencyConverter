@@ -28,7 +28,6 @@ public class ExchangeRateUpdateWorker extends Worker {
     }
 
     private void updateCurrencies() {
-
         Thread thread = new Thread(() -> {
             String webString = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
             try {
@@ -57,12 +56,6 @@ public class ExchangeRateUpdateWorker extends Worker {
         });
         thread.start();
     }
-    /*
-    boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
 
-     */
+
 }
