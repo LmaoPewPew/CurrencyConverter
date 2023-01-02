@@ -9,18 +9,20 @@
         app:actionProviderClass="androidx.appcompat.widget.ShareActionProvider"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/item_reset"
+        android:icon="@drawable/ic_baseline_reset"
+        android:title="@string/reset_values" />
 
     <item
         android:id="@+id/item_list"
         android:icon="@drawable/ic_currencylist"
-        android:title="@string/currency_list_view"
-        android:visible="true" />
+        android:title="@string/currency_list_view" />
 
     <item
-        android:id="@+id/item_refresh"
+        android:id="@+id/item_update"
         android:icon="@drawable/ic_baseline_update_24"
-        android:title="@string/refresh_rates"
-        android:visible="true" />
+        android:title="@string/refresh_rates" />
 
 
 </menu>

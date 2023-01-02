@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,13 +21,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.ShareActionProvider;
 import androidx.core.view.MenuItemCompat;
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
-
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -42,13 +42,13 @@ public class MainActivity extends AppCompatActivity {
      */
 
     /********Set Global Variables Variables********/
-    ExchangeRateDatabase db = new ExchangeRateDatabase();
+    ExchangeRateDatabase db = ExchangeRateDatabaseAccess.getExchangeRateDatabase();
     private ShareActionProvider sap;
 
     Runnable runnable = () -> {
         Toast toast = Toast.makeText(getApplicationContext(), "ExchangeRate Updated", Toast.LENGTH_SHORT);
         toast.show();
-        // notifier.show();
+
     };
 
     /********ON CREATE METHODE********/
@@ -58,9 +58,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         createFunctions();
-        spinnerAdapter(new ExchangeRateAdapter(Arrays.asList(db.getCurrencies())));
+        spinnerAdapter(ExchangeRateDatabaseAccess.getExchangeRateAdapter());
 
-        updateCurrencies();
+        schedulePeriodicCounting();
+
     }
 
     @Override
@@ -81,11 +82,15 @@ public class MainActivity extends AppCompatActivity {
         editor.putString("textView2", valOut.getText().toString());
 
         editor.apply();
-/*
+
+    /*
+    //Removed because doesn't load correctly
         for (String currency : db.getCurrencies()) {
             editor.putFloat(currency, (float) ExchangeRateDatabase.getExchangeRate(currency));
-        }
-        */
+    }*/
+
+        WorkRequest rateUpdateRequest = new OneTimeWorkRequest.Builder(ExchangeRateUpdateWorker.class).build();
+        WorkManager.getInstance(this).enqueue(rateUpdateRequest);
 
     }
 
@@ -112,7 +117,10 @@ public class MainActivity extends AppCompatActivity {
         for (String currency : db.getCurrencies()) {
             ExchangeRateDatabase.setExchangeRate(currency, pref.getFloat(currency, 0));
         }
-        */
+*/
+
+        WorkRequest rateUpdateRequest = new OneTimeWorkRequest.Builder(ExchangeRateUpdateWorker.class).build();
+        WorkManager.getInstance(this).enqueue(rateUpdateRequest);
 
     }
 
@@ -134,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("RestrictedApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        TextView result = (TextView) findViewById(R.id.ValOutput);
+        TextView result = findViewById(R.id.ValOutput);
         getMenuInflater().inflate(R.menu.menu, menu);
 
         MenuItem shareItem = menu.findItem(R.id.item_share);
@@ -171,66 +179,28 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(CurrencyIntent);
                 createToast("Currency List");
                 break;
-            case R.id.item_refresh:
-                updateCurrencies();
+            case R.id.item_update:
+                WorkRequest rateUpdateRequest = new OneTimeWorkRequest.Builder(ExchangeRateUpdateWorker.class).build();
+                WorkManager.getInstance(this).enqueue(rateUpdateRequest);
 
                 Intent MainIntent = new Intent(this, MainActivity.class);
                 startActivity(MainIntent);
+
                 break;
+            case R.id.item_reset:
+                Log.d("Reset", "hi");
+                resetValues();
         }
         return super.onOptionsItemSelected(item);
     }
 
-    /********Refresh Cur-Rates********/
-    private void updateCurrencies() {
-        if (isNetworkAvailable()) {
-            createToast("Checking for Updates");
-            ExchangeRateAdapter exa = new ExchangeRateAdapter(Arrays.asList(db.getCurrencies()));
 
-            currencyAPI();
-            exa.notifyDataSetChanged();
-            this.runOnUiThread(runnable);
-        } else createToast("internet-connection is unavailable");
-    }
-
-    private void currencyAPI() {
-
-        Thread thread = new Thread(() -> {
-            String webString = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
-            try {
-                URL url = new URL(webString);
-                URLConnection connection = url.openConnection();
-                XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
-                parser.setInput(connection.getInputStream(), connection.getContentEncoding());
-                int eventType = parser.getEventType();
-                while (eventType != XmlPullParser.END_DOCUMENT) {
-                    if (eventType == XmlPullParser.START_TAG) {
-                        if (parser.getName().equals("Cube")) {
-                            String currency = parser.getAttributeValue(null, "currency");
-                            String rate = parser.getAttributeValue(null, "rate");
-                            if (currency != null && rate != null) {
-                                ExchangeRateDatabase.setExchangeRate(currency, Double.parseDouble(rate));
-                                Log.d("Currency", currency + " | " + rate);
-                            }
-                        }
-                    }
-                    eventType = parser.next();
-                }
-            } catch (Exception e) {
-                Log.e("ErrorURL", "Error with XML: " + e.getMessage());
-                throw new RuntimeException(e);
-            }
-        });
-        thread.start();
-    }
-
-    /********Smaller MMethods********/
     @SuppressLint("SetTextI18n")
     public void calculation(TextView in, TextView out, Spinner spFrom, Spinner spTo) {
         if (TextUtils.isEmpty(in.getText().toString())) out.setText("0");
         else {
             double conversion = db.convert(Double.parseDouble(in.getText().toString()), spFrom.getSelectedItem().toString(), spTo.getSelectedItem().toString());
-            conversion = (double) Math.floor(conversion * 100) / 100;
+            conversion = Math.floor(conversion * 100) / 100;
 
             out.setText(Double.toString(conversion));
         }
@@ -245,19 +215,18 @@ public class MainActivity extends AppCompatActivity {
 
         Button btnCalc = findViewById(R.id.btnCalc);
 
-        spinnerAdapter(new ExchangeRateAdapter(Arrays.asList(db.getCurrencies())));
+        spinnerAdapter(ExchangeRateDatabaseAccess.getExchangeRateAdapter());
 
         btnCalc.setTextSize(20f);
         btnCalc.setOnClickListener(v -> calculation(valIn, valOut, spFrom, spTo));
 
+        TextView textFrom = findViewById(R.id.txtFrom);
+        TextView textTo = findViewById(R.id.txtFrom2);
+
+        checkTheme(textFrom);
+        checkTheme(textTo);
         checkTheme(valIn);
         checkTheme(valOut);
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     private void setShareText(String text) {
@@ -301,4 +270,27 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
+    private void schedulePeriodicCounting() {
+        WorkManager workManager = WorkManager.getInstance(this);
+        Constraints constraints = new Constraints.Builder()
+                .setRequiresCharging(true)
+                .build();
+        PeriodicWorkRequest periodicCounterRequest =
+                new PeriodicWorkRequest.Builder(ExchangeRateUpdateWorker.class, 24, TimeUnit.HOURS).setConstraints(constraints).addTag("CurrencyUpdate").build();
+        workManager.enqueueUniquePeriodicWork("CurrencyUpdate", ExistingPeriodicWorkPolicy.KEEP, periodicCounterRequest);
+
+    }
+
+    private void resetValues() {
+        TextView valIn = findViewById(R.id.ValInput);
+        TextView valOut = findViewById(R.id.ValOutput);
+
+        Spinner spFrom = findViewById(R.id.spFrom);
+        Spinner spTo = findViewById(R.id.spTo);
+
+        valIn.setText("");
+        valOut.setText("");
+        spFrom.setSelection(8);
+        spTo.setSelection(30);
+    }
 }

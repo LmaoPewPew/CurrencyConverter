@@ -26,7 +26,7 @@ public class Currency_List_Viewer extends AppCompatActivity {
         actionbarSettings();
 
         listViewer(new ExchangeRateAdapter(Arrays.asList(db.getCurrencies())));
-        updateCurrencies();
+
     }
 
     /********ActionbarSettings********/
@@ -41,17 +41,12 @@ public class Currency_List_Viewer extends AppCompatActivity {
     /********Show List View********/
 
     private void listViewer(ExchangeRateAdapter exa) {
-        ListView lv = (ListView) findViewById(R.id.ListView);
+        ListView lv = findViewById(R.id.ListView);
         lv.setAdapter(exa);
 
         lv.setOnItemClickListener((parent, view, position, id) -> getLocation(position, lv));
     }
 
-
-    /********Update Currencies********/
-    public void updateCurrencies() {
-
-    }
 
     /********Open Maps********/
     private void getLocation(int pos, ListView lv) {
@@ -59,11 +54,9 @@ public class Currency_List_Viewer extends AppCompatActivity {
         openMaps(db.getCapital(location));
     }
 
-
     private void openMaps(String location) {
         //open GoogleMaps  with the Capital
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0`?q=" + location));
-        mapIntent.setPackage("com.google.android.apps.maps");
         startActivity(mapIntent);
     }
 

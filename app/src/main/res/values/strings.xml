@@ -12,6 +12,7 @@
     <string name="more">More</string>
     <string name="money">money</string>
     <string name="todo">TODO</string>
+    <string name="reset_values">Reset Values</string>
 
     <string-array name="curr_arr">
         <item>EURO</item>
