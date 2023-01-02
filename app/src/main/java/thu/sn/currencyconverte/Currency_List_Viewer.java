@@ -29,17 +29,7 @@ public class Currency_List_Viewer extends AppCompatActivity {
 
     }
 
-    /********ActionbarSettings********/
-
-    private void actionbarSettings() {
-        ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.setTitle("Currency View");
-        actionBar.setDisplayHomeAsUpEnabled(true);
-    }
-
     /********Show List View********/
-
     private void listViewer(ExchangeRateAdapter exa) {
         ListView lv = findViewById(R.id.ListView);
         lv.setAdapter(exa);
@@ -58,6 +48,14 @@ public class Currency_List_Viewer extends AppCompatActivity {
         //open GoogleMaps  with the Capital
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0`?q=" + location));
         startActivity(mapIntent);
+    }
+
+    /********ActionbarSettings********/
+    private void actionbarSettings() {
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setTitle("Currency View");
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
 }

@@ -20,6 +20,7 @@
             android:id="@+id/spFrom"
             android:layout_width="201dp"
             android:layout_height="56dp"
+            android:layout_marginStart="8dp"
             app:layout_constraintBottom_toBottomOf="@+id/txtFrom"
             app:layout_constraintStart_toEndOf="@+id/txtFrom"
             app:layout_constraintTop_toTopOf="@+id/txtFrom"
@@ -53,7 +54,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/txtFrom2"
             app:layout_constraintEnd_toEndOf="@+id/spFrom"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/txtFrom"
+            app:layout_constraintStart_toStartOf="@+id/spFrom"
             app:layout_constraintTop_toTopOf="@+id/txtFrom2"
             app:layout_constraintVertical_bias="0.517"
             tools:ignore="SpeakableTextPresentCheck" />

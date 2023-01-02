@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.ShareActionProvider;
@@ -35,12 +37,6 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
 
 
-    /*TODO::
-      7: Store and restore (+ Music player)
-      8: Update app
-      9: Toast
-     */
-
     /********Set Global Variables Variables********/
     ExchangeRateDatabase db = ExchangeRateDatabaseAccess.getExchangeRateDatabase();
     private ShareActionProvider sap;
@@ -56,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        checkThemeActionBar();
 
         createFunctions();
         spinnerAdapter(ExchangeRateDatabaseAccess.getExchangeRateAdapter());
@@ -84,10 +82,10 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
 
     /*
-    //Removed because doesn't load correctly
         for (String currency : db.getCurrencies()) {
             editor.putFloat(currency, (float) ExchangeRateDatabase.getExchangeRate(currency));
-    }*/
+    }
+    */
 
         WorkRequest rateUpdateRequest = new OneTimeWorkRequest.Builder(ExchangeRateUpdateWorker.class).build();
         WorkManager.getInstance(this).enqueue(rateUpdateRequest);
@@ -113,11 +111,11 @@ public class MainActivity extends AppCompatActivity {
         valOut.setText(valOutString);
         spFrom.setSelection(db.getIndexOf(spFromString));
         spTo.setSelection(db.getIndexOf(spToString));
-/*
+    /*
         for (String currency : db.getCurrencies()) {
             ExchangeRateDatabase.setExchangeRate(currency, pref.getFloat(currency, 0));
         }
-*/
+    */
 
         WorkRequest rateUpdateRequest = new OneTimeWorkRequest.Builder(ExchangeRateUpdateWorker.class).build();
         WorkManager.getInstance(this).enqueue(rateUpdateRequest);
@@ -191,6 +189,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("Reset", "hi");
                 resetValues();
         }
+
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -223,10 +223,24 @@ public class MainActivity extends AppCompatActivity {
         TextView textFrom = findViewById(R.id.txtFrom);
         TextView textTo = findViewById(R.id.txtFrom2);
 
+
+        MenuItem reset = findViewById(R.id.item_reset);
+        MenuItem list = findViewById(R.id.item_list);
+        MenuItem update = findViewById(R.id.item_update);
+
+
         checkTheme(textFrom);
         checkTheme(textTo);
         checkTheme(valIn);
         checkTheme(valOut);
+        checkTheme(btnCalc);
+/*
+        checkTheme(reset);
+        checkTheme(list);
+        checkTheme(update);
+*/
+        //checkTheme(share);
+
     }
 
     private void setShareText(String text) {
@@ -250,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void checkTheme(TextView textView) {
+    public void checkTheme(TextView textView) {
         int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         switch (nightModeFlags) {
             case Configuration.UI_MODE_NIGHT_YES:
@@ -261,10 +275,48 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case Configuration.UI_MODE_NIGHT_UNDEFINED:
-                textView.setTextColor(Color.DKGRAY);
+                textView.setTextColor(Color.GRAY);
                 break;
         }
     }
+
+    public void checkTheme(Button button) {
+        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        button.setTextColor(Color.WHITE);
+        switch (nightModeFlags) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                button.setBackgroundColor(Color.parseColor("#282857"));
+                break;
+            case Configuration.UI_MODE_NIGHT_NO:
+                button.setBackgroundColor(Color.parseColor("#6088b3"));
+                break;
+            case Configuration.UI_MODE_NIGHT_UNDEFINED:
+                button.setTextColor(Color.GRAY);
+                button.setBackgroundColor(Color.parseColor("#1c8777"));
+                break;
+        }
+    }
+
+    public void checkThemeActionBar() {
+        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        ActionBar ab = getSupportActionBar();
+
+        switch (nightModeFlags) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                assert ab != null;
+                ab.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#282857")));
+                break;
+            case Configuration.UI_MODE_NIGHT_NO:
+                assert ab != null;
+                ab.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#6088b3")));
+                break;
+            case Configuration.UI_MODE_NIGHT_UNDEFINED:
+                assert ab != null;
+                ab.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1c8777")));
+                break;
+        }
+    }
+
 
     public void createToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();

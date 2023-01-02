@@ -2,6 +2,7 @@ package thu.sn.currencyconverte;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import java.util.List;
 public class ExchangeRateAdapter extends BaseAdapter {
     List<String> currencyList;
     ExchangeRateDatabase db = new ExchangeRateDatabase();
+    private Context context;
 
     public ExchangeRateAdapter(List<String> currency) {
         this.currencyList = currency;
@@ -49,8 +51,7 @@ public class ExchangeRateAdapter extends BaseAdapter {
         double exchangeRate = Double.parseDouble(df.format(ExchangeRateDatabase.getExchangeRate(currency)));
         String imageNameFile = "flag_" + currency.toLowerCase();
 
-
-        int imageId = context.getResources().getIdentifier(imageNameFile, "drawable", context.getPackageName());
+        @SuppressLint("DiscouragedApi") int imageId = context.getResources().getIdentifier(imageNameFile, "drawable", context.getPackageName());
 
 
         if (view == null) {
@@ -69,8 +70,25 @@ public class ExchangeRateAdapter extends BaseAdapter {
 
         moneyText.setText(exchangeRate + "€");
 
-        currencyText.setTextColor(Color.DKGRAY);
-        moneyText.setTextColor(Color.DKGRAY);
+        checkTheme(currencyText);
+        checkTheme(moneyText);
         return view;
     }
+
+    public void checkTheme(TextView textView) {
+        int nightModeFlags = textView.getContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        switch (nightModeFlags) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                textView.setTextColor(Color.WHITE);
+                break;
+            case Configuration.UI_MODE_NIGHT_NO:
+                textView.setTextColor(Color.BLACK);
+                break;
+
+            case Configuration.UI_MODE_NIGHT_UNDEFINED:
+                textView.setTextColor(Color.DKGRAY);
+                break;
+        }
+    }
+
 }
