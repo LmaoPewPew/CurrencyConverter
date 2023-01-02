@@ -3,6 +3,7 @@ package thu.sn.currencyconverte;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
@@ -44,16 +45,88 @@ public class MainActivity extends AppCompatActivity {
     ExchangeRateDatabase db = new ExchangeRateDatabase();
     private ShareActionProvider sap;
 
+    Runnable runnable = () -> {
+        Toast toast = Toast.makeText(getApplicationContext(), "ExchangeRate Updated", Toast.LENGTH_SHORT);
+        toast.show();
+        // notifier.show();
+    };
+
     /********ON CREATE METHODE********/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        updateCurrencies();
-
+        createFunctions();
         spinnerAdapter(new ExchangeRateAdapter(Arrays.asList(db.getCurrencies())));
-        onConfigurationChanged(getResources().getConfiguration());
+
+        updateCurrencies();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        TextView valIn = findViewById(R.id.ValInput);
+        TextView valOut = findViewById(R.id.ValOutput);
+        Spinner spFrom = findViewById(R.id.spFrom);
+        Spinner spTo = findViewById(R.id.spTo);
+
+        SharedPreferences pref = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putString("spinner1", spFrom.getSelectedItem().toString());
+        editor.putString("spinner2", spTo.getSelectedItem().toString());
+        editor.putString("textView1", valIn.getText().toString());
+        editor.putString("textView2", valOut.getText().toString());
+
+        editor.apply();
+/*
+        for (String currency : db.getCurrencies()) {
+            editor.putFloat(currency, (float) ExchangeRateDatabase.getExchangeRate(currency));
+        }
+        */
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
+        TextView valIn = findViewById(R.id.ValInput);
+        TextView valOut = findViewById(R.id.ValOutput);
+        Spinner spFrom = findViewById(R.id.spFrom);
+        Spinner spTo = findViewById(R.id.spTo);
+
+        String valInString = pref.getString("textView1", "");
+        String valOutString = pref.getString("textView2", "");
+        String spFromString = pref.getString("spinner1", "");
+        String spToString = pref.getString("spinner2", "");
+
+        valIn.setText(valInString);
+        valOut.setText(valOutString);
+        spFrom.setSelection(db.getIndexOf(spFromString));
+        spTo.setSelection(db.getIndexOf(spToString));
+/*
+        for (String currency : db.getCurrencies()) {
+            ExchangeRateDatabase.setExchangeRate(currency, pref.getFloat(currency, 0));
+        }
+        */
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        TextView valOut = findViewById(R.id.ValOutput);
+        Spinner spFrom = findViewById(R.id.spFrom);
+        Spinner spTo = findViewById(R.id.spTo);
+
+        outState.putString("textView", valOut.getText().toString());
+        outState.putString("spinner1", spFrom.getSelectedItem().toString());
+        outState.putString("spinner2", spTo.getSelectedItem().toString());
     }
 
     /********ACTIONBAR-MENU********/
@@ -63,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         TextView result = (TextView) findViewById(R.id.ValOutput);
         getMenuInflater().inflate(R.menu.menu, menu);
-
 
         MenuItem shareItem = menu.findItem(R.id.item_share);
         sap = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
@@ -76,16 +148,28 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        TextView valOut = findViewById(R.id.ValOutput);
+        Spinner spFrom = findViewById(R.id.spFrom);
+        Spinner spTo = findViewById(R.id.spTo);
+
+        spFrom.setSelection(Arrays.asList(db.getCurrencies()).indexOf(savedInstanceState.getString("spinner1")));
+        spTo.setSelection(Arrays.asList(db.getCurrencies()).indexOf(savedInstanceState.getString("spinner2")));
+        valOut.setText(savedInstanceState.getString("textView"));
+    }
+
     // MenuItem Interaction
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
         switch (item.getItemId()) {
             case R.id.item_list:
                 Intent CurrencyIntent = new Intent(this, Currency_List_Viewer.class);
                 startActivity(CurrencyIntent);
-                makeToast("Currency List");
+                createToast("Currency List");
                 break;
             case R.id.item_refresh:
                 updateCurrencies();
@@ -97,74 +181,21 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /********Orientations********/
-    //Phone Rotation Check
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            setContentView(R.layout.landscape);
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            setContentView(R.layout.activity_main);
-        }
-
-        createFunctions();
-    }
-
-    private void createFunctions() {
-        TextView valIn = findViewById(R.id.ValInput);
-        TextView valOut = findViewById(R.id.ValOutput);
-
-        Spinner spFrom = findViewById(R.id.spFrom);
-        Spinner spTo = findViewById(R.id.spTo);
-        spinnerAdapter(new ExchangeRateAdapter(Arrays.asList(db.getCurrencies())));
-
-        Button btnCalc = findViewById(R.id.btnCalc);
-        btnCalc.setTextSize(20f);
-        btnCalc.setOnClickListener(v -> calculation(valIn, valOut, spFrom, spTo));
-
-        checkTheme(valIn);
-        checkTheme(valOut);
-    }
-
-    /********Dark/White Mode********/
-    private void checkTheme(TextView textView) {
-        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        switch (nightModeFlags) {
-            case Configuration.UI_MODE_NIGHT_YES:
-                textView.setTextColor(Color.WHITE);
-                break;
-            case Configuration.UI_MODE_NIGHT_NO:
-                textView.setTextColor(Color.BLACK);
-                break;
-
-            case Configuration.UI_MODE_NIGHT_UNDEFINED:
-                textView.setTextColor(Color.DKGRAY);
-                break;
-        }
-    }
-
-
     /********Refresh Cur-Rates********/
     private void updateCurrencies() {
         if (isNetworkAvailable()) {
-            makeToast("Checking for Updates");
+            createToast("Checking for Updates");
             ExchangeRateAdapter exa = new ExchangeRateAdapter(Arrays.asList(db.getCurrencies()));
 
             currencyAPI();
             exa.notifyDataSetChanged();
-
-            makeToast("All Currencies are Up to Date");
-        } else makeToast("internet-connection is unavailable");
-
+            this.runOnUiThread(runnable);
+        } else createToast("internet-connection is unavailable");
     }
 
     private void currencyAPI() {
 
-
         Thread thread = new Thread(() -> {
-
             String webString = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
             try {
                 URL url = new URL(webString);
@@ -193,12 +224,42 @@ public class MainActivity extends AppCompatActivity {
         thread.start();
     }
 
-    /********Makes fresh Toast********/
-    public void makeToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    /********Smaller MMethods********/
+    @SuppressLint("SetTextI18n")
+    public void calculation(TextView in, TextView out, Spinner spFrom, Spinner spTo) {
+        if (TextUtils.isEmpty(in.getText().toString())) out.setText("0");
+        else {
+            double conversion = db.convert(Double.parseDouble(in.getText().toString()), spFrom.getSelectedItem().toString(), spTo.getSelectedItem().toString());
+            conversion = (double) Math.floor(conversion * 100) / 100;
+
+            out.setText(Double.toString(conversion));
+        }
     }
 
-    /********Share Function********/
+    private void createFunctions() {
+        TextView valIn = findViewById(R.id.ValInput);
+        TextView valOut = findViewById(R.id.ValOutput);
+
+        Spinner spFrom = findViewById(R.id.spFrom);
+        Spinner spTo = findViewById(R.id.spTo);
+
+        Button btnCalc = findViewById(R.id.btnCalc);
+
+        spinnerAdapter(new ExchangeRateAdapter(Arrays.asList(db.getCurrencies())));
+
+        btnCalc.setTextSize(20f);
+        btnCalc.setOnClickListener(v -> calculation(valIn, valOut, spFrom, spTo));
+
+        checkTheme(valIn);
+        checkTheme(valOut);
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
     private void setShareText(String text) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
@@ -208,7 +269,6 @@ public class MainActivity extends AppCompatActivity {
         sap.setShareIntent(shareIntent);
     }
 
-    /********Adapter********/
     public void spinnerAdapter(ExchangeRateAdapter adapter) {
         Spinner spFrom = findViewById(R.id.spFrom);
         Spinner spTo = findViewById(R.id.spTo);
@@ -216,28 +276,29 @@ public class MainActivity extends AppCompatActivity {
         spFrom.setAdapter(adapter);
         spTo.setAdapter(adapter);
 
-
         spFrom.setSelection(8);
         spTo.setSelection(30);
 
     }
 
-    /********Calculate********/
-    @SuppressLint("SetTextI18n")
-    public void calculation(TextView in, TextView out, Spinner spFrom, Spinner spTo) {
-        if (TextUtils.isEmpty(in.getText().toString())) out.setText("0");
-        else {
-            double conversion = db.convert(Double.parseDouble(in.getText().toString()), spFrom.getSelectedItem().toString(), spTo.getSelectedItem().toString());
-            conversion = (double) Math.round(conversion * 100) / 100;
+    private void checkTheme(TextView textView) {
+        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        switch (nightModeFlags) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                textView.setTextColor(Color.WHITE);
+                break;
+            case Configuration.UI_MODE_NIGHT_NO:
+                textView.setTextColor(Color.BLACK);
+                break;
 
-            out.setText(Double.toString(conversion));
+            case Configuration.UI_MODE_NIGHT_UNDEFINED:
+                textView.setTextColor(Color.DKGRAY);
+                break;
         }
     }
 
-    /********CheckInternet********/
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    public void createToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
+
 }

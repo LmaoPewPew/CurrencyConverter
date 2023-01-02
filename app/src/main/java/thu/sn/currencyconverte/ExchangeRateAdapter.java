@@ -10,11 +10,13 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class ExchangeRateAdapter extends BaseAdapter {
     List<String> currencyList;
-    ExchangeRateDatabase exRaDB = new ExchangeRateDatabase();
+    ExchangeRateDatabase db = new ExchangeRateDatabase();
 
     public ExchangeRateAdapter(List<String> currency) {
         this.currencyList = currency;
@@ -39,10 +41,15 @@ public class ExchangeRateAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View view, ViewGroup vGroup) {
         Context context = vGroup.getContext();
-        String currency = exRaDB.getCurrencies()[position];
-        double exchangeRate = exRaDB.getExchangeRate(currency);
+        String currency = db.getCurrencies()[position];
 
+        DecimalFormat df = new DecimalFormat("0.0000");
+        df.setRoundingMode(RoundingMode.DOWN);
+
+        double exchangeRate = Double.parseDouble(df.format(ExchangeRateDatabase.getExchangeRate(currency)));
         String imageNameFile = "flag_" + currency.toLowerCase();
+
+
         int imageId = context.getResources().getIdentifier(imageNameFile, "drawable", context.getPackageName());
 
 
@@ -59,8 +66,8 @@ public class ExchangeRateAdapter extends BaseAdapter {
         currencyText.setText(currency);
 
         TextView moneyText = view.findViewById(R.id.currencyExChangeView);
-        final double roundedExchangeRate = /**/Math.floor(exchangeRate * 100) / 100; //*/ exchangeRate;
-        moneyText.setText(roundedExchangeRate + "€");
+
+        moneyText.setText(exchangeRate + "€");
 
         currencyText.setTextColor(Color.DKGRAY);
         moneyText.setTextColor(Color.DKGRAY);

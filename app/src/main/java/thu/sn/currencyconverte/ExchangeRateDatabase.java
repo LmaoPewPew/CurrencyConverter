@@ -69,7 +69,7 @@ public class ExchangeRateDatabase {
      * @param currency Currency name (three letters)
      * @return Exchange rate for the currency
      */
-    public double getExchangeRate(String currency) {
+    public static double getExchangeRate(String currency) {
         return Objects.requireNonNull(CURRENCIES_MAP.get(currency)).getRateForOneEuro();
     }
 
@@ -83,6 +83,14 @@ public class ExchangeRateDatabase {
         Objects.requireNonNull(CURRENCIES_MAP.get(currency)).setRateForOneEuro(exchangeRate);
     }
 
+    public int getIndexOf(String currency) {
+        for (int i = 0; i < CURRENCIES_LIST.length; i++) {
+            if (CURRENCIES_LIST[i].equals(currency)) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     /**
      * Returns the capital of the country issuing the currency
