@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
 
         checkThemeActionBar();
         createFunctions();
-        spinnerAdapter(ExchangeRateDatabaseAccess.getExchangeRateAdapter());
 
         schedulePeriodicCounting();
     }
@@ -137,6 +136,19 @@ public class MainActivity extends AppCompatActivity {
         outState.putString("spinner2", spTo.getSelectedItem().toString());
     }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        TextView valOut = findViewById(R.id.ValOutput);
+        Spinner spFrom = findViewById(R.id.spFrom);
+        Spinner spTo = findViewById(R.id.spTo);
+
+        spFrom.setSelection(Arrays.asList(ExchangeRateDatabase.getCurrencies()).indexOf(savedInstanceState.getString("spinner1")));
+        spTo.setSelection(Arrays.asList(ExchangeRateDatabase.getCurrencies()).indexOf(savedInstanceState.getString("spinner2")));
+        valOut.setText(savedInstanceState.getString("textView"));
+    }
+
     /********ACTIONBAR-MENU********/
     //actionbar menu items
     @SuppressLint("RestrictedApi")
@@ -154,19 +166,6 @@ public class MainActivity extends AppCompatActivity {
             m.setOptionalIconsVisible(true);
         }
         return true;
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        TextView valOut = findViewById(R.id.ValOutput);
-        Spinner spFrom = findViewById(R.id.spFrom);
-        Spinner spTo = findViewById(R.id.spTo);
-
-        spFrom.setSelection(Arrays.asList(ExchangeRateDatabase.getCurrencies()).indexOf(savedInstanceState.getString("spinner1")));
-        spTo.setSelection(Arrays.asList(ExchangeRateDatabase.getCurrencies()).indexOf(savedInstanceState.getString("spinner2")));
-        valOut.setText(savedInstanceState.getString("textView"));
     }
 
     // MenuItem Interaction
